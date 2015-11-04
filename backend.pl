@@ -9,12 +9,13 @@ package Model;
 use strict;
 
 use ORLite {
-    file   => 'stats.sqlite',
-    create => sub {
+    file    => 'stats.sqlite',
+    create  => sub {
         shift->do('
           CREATE TABLE stats (
+            key TEXT PRIMARY KEY NOT NULL,
             count INTEGER,
-            key TEXT NOT NULL
+            UNIQUE(key) ON CONFLICT REPLACE
           )
         ');
         1;
@@ -24,7 +25,7 @@ use ORLite {
 package main;
 
 use Mojolicious::Lite;
-use JSON::XS;
+use JSON::XS qw /decode_json/;
 
 get '/' => sub {
     my $c = shift;
@@ -33,12 +34,19 @@ get '/' => sub {
 
 post '/stats.json' => sub {
     my $c    = shift;
-    my $data = JSON::XS->new->decode( $c->param('json') );
+    my $data = decode_json ( $c->param('json') );
 
     foreach my $key ( keys %{$data} ) {
-        Model::Stats->create(
+        my $count = $data->{$key};
+
+        my @res = Model::Stats->select('where key=?', $key);
+        if( @res ){
+            $count += $res[0]->count;
+        }
+
+        Model::Stats->create( # here goes schema-defined upsert logic
             key   => $key,
-            count => $data->{$key}
+            count => $count
         );
     }
     $c->render( text => 'ok' );

@@ -4,14 +4,12 @@ use strict;
 use Test::More;
 use Test::Mojo;
 use JSON::XS qw /encode_json/;
-use Carp;
 
 use FindBin;
 require "$FindBin::Bin/../backend.pl";
 
 
 my $t = new Test::Mojo;
-
 
 $t->get_ok('/')->status_is(200);
 
@@ -22,12 +20,18 @@ my %first = (
 
 my %second = (
   firstkey => 3,
-  secondkey => 1
+  secondkey => 100500
 );
 
 $t->post_ok('/stats.json' => form => {json => encode_json(\%first)})->status_is(200);
 
 my @res = Model::Stats->select('where key=?', 'firstkey');
-my $firstKeyCount = $res[0]->count;
-is($firstKeyCount, 5);
+is($res[0]->count, 5);
+
+$t->post_ok('/stats.json' => form => {json => encode_json(\%second)})->status_is(200);
+@res = Model::Stats->select('where key=?', 'firstkey');
+is($res[0]->count, 8);
+
+@res = Model::Stats->select('where key=?', 'secondkey');
+is($res[0]->count, 100502);
 done_testing();
