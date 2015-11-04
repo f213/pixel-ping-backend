@@ -7,15 +7,16 @@
 
 package Model;
 use strict;
+
 use ORLite {
     file   => 'stats.sqlite',
     create => sub {
-        shift->do(
-            'CREATE TABLE stats (
-        count INTEGER,
-        key TEXT NOT NULL
-      )'
-        );
+        shift->do('
+          CREATE TABLE stats (
+            count INTEGER,
+            key TEXT NOT NULL
+          )
+        ');
         1;
     }
 };
