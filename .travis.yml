@@ -6,4 +6,4 @@ install:
   - cpanm --notest Mojolicious JSON::XS ORLite
 
 script:
-  - pover -v
+  - prove -v
