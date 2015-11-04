@@ -2,7 +2,7 @@ language: perl
 perl:
   - "5.18"
 
-before_install:
+install:
   - cpanm --notest Mojolicious JSON::XS ORLite
 
 script:
