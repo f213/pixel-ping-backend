@@ -32,12 +32,6 @@ is($res[0]->count, 5);
 $t->post_ok('/stats.json' => form =>
     {json => encode_json(\%second)})->status_is(200);
 
-@res = Model::Stats->select('where key=?', 'firstkey');
-is($res[0]->count, 8);
-
-@res = Model::Stats->select('where key=?', 'secondkey');
-is($res[0]->count, 100502);
-
 $t->get_ok('/stats.json')->json_is([
         {secondkey  => 100502},
         {firstkey   => 8}
