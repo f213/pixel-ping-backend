@@ -39,8 +39,8 @@ is($res[0]->count, 8);
 is($res[0]->count, 100502);
 
 $t->get_ok('/stats.json')->json_is([
-        {firstkey   => 8},
-        {secondkey  => 100502}
+        {secondkey  => 100502},
+        {firstkey   => 8}
     ]
 );
 
