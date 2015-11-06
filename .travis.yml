@@ -3,7 +3,7 @@ perl:
   - "5.18"
 
 install:
-  - cpanm --notest Mojolicious JSON::XS ORLite
+  - cpanm --notest Mojolicious ORLite
 
 script:
   - prove -v
